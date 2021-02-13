@@ -13,7 +13,7 @@ def check_instance(url):
     Returns the instance software as a string.
 
             Parameter:
-                    url (str): An HTML document.
+                    url (str): Profile URL.
 
             Returns:
                     instance_software (str): Server software.
