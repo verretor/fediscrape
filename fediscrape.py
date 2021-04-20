@@ -242,6 +242,8 @@ if __name__ == '__main__':
         while url:
             lst_toot, url = mastodon_scrape(url)
             for toot in lst_toot:
+                # Print toot on a single line.
+                toot = str(toot).replace('\n', '')
                 print(f'{toot}\n')
         exit()
     elif instance_software == -1:
