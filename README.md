@@ -20,17 +20,17 @@ Usage
 
 Print all posts/replies:
 ```bash
-./fediscrape.py https://example.com/@user
+./fediscrape.py username@example.com
 ```
 
 Search for specific string:
 ```bash
-./fediscrape.py https://example.com/@user | grep "search string"
+./fediscrape.py username@example.com | grep "search string"
 ```
 
 Write all posts/replies to a file:
 ```bash
-./fediscrape.py https://example.com/@user > filename
+./fediscrape.py username@example.com > filename
 ```
 
 Contributing
