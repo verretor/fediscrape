@@ -8,12 +8,12 @@ from bs4 import BeautifulSoup
 
 SLEEP = 5
 
-def check_instance(url):
+def check_instance(domain_name):
     '''
     Returns the instance software as a string.
 
             Parameter:
-                    url (str): Profile URL.
+                    domain_name (str): domain name.
 
             Returns:
                     instance_software (str): Server software.
@@ -21,17 +21,21 @@ def check_instance(url):
             In case of error:
                     Returns -1 (int).
     '''
-    html_doc = fetch(url)
-    if html_doc == -1:
+    url = f'https://{domain_name}/api/v1/instance'
+    json_instance = fetch(url)
+    if json_instance == -1:
         return -1
-    html_doc = html_doc.text
-    soup = BeautifulSoup(html_doc, 'html.parser')
-    mastodon_script = soup.find('script', attrs={'id': 'initial-state'})
-    if mastodon_script and 'tootsuite/mastodon' in str(mastodon_script):
-        return 'Mastodon'
-    pleroma_script = soup.find('noscript')
-    if pleroma_script and 'Pleroma' in str(pleroma_script):
+    json_instance = json_instance.text
+
+    dict_instance = load_json(json_instance)
+    if type(dict_instance) != dict:
+        sys.stderr.write('Error parsing instance JSON.\n')
+        return -1
+
+    if 'pleroma' in dict_instance.keys():
         return 'Pleroma'
+    else:
+        return 'Mastodon'
 
     sys.stderr.write('Server software not recognized.\n')
     return -1
@@ -70,12 +74,13 @@ def fetch(url):
 
     return r
 
-def find_pleroma_user(url):
+def find_pleroma_user(username, domain_name):
     '''
     Returns domain name (str) and user id (str) as a tuple.
 
             Parameter:
-                    url (str): API URL.
+                    username (str): user name.
+                    domain_name (str): domain name.
 
             Returns:
                     domain_name (str), user_id (str): Domain name and user id.
@@ -83,11 +88,8 @@ def find_pleroma_user(url):
             In case of error:
                     Returns -1, -1 (integers).
     '''
-    username = url.split('/')[-1]
-    username = username.replace('@', '')
-
-    domain_name = url.split('://')[-1]
-    domain_name = domain_name.split('/')[0]
+    #username = url.split('/')[-1]
+    #username = username.replace('@', '')
     
     url = f'https://{domain_name}/api/v1/accounts/{username}'
 
@@ -105,7 +107,7 @@ def find_pleroma_user(url):
         sys.stderr.write('No user id.\n')
         return -1, -1 
 
-    return domain_name, user_id
+    return user_id
 
 def load_json(json_data):
     '''
@@ -181,7 +183,7 @@ def pleroma_scrape(url, domain_name, user_id):
 
             Parameters:
                     url (str): API URL.
-                    domain_name (str): domain_name.
+                    domain_name (str): domain name.
                     user_id (str): User id.
 
             Returns:
@@ -228,17 +230,19 @@ def pleroma_scrape(url, domain_name, user_id):
 
 if __name__ == '__main__':
     # Usage: ./fediscrape.py https://example.com/@user
-    if len(sys.argv) != 2:
-        sys.stderr.write(f'Usage: {sys.argv[0]} https://example.com/@user\n')
+    if len(sys.argv) != 2 or '@' not in sys.argv[1]:
+        sys.stderr.write(f'Usage: {sys.argv[0]} username@domain\n')
         exit(1)
-    profile_url = sys.argv[1]
+    handle = sys.argv[1]
 
-    # Fetch the profile page to determine what software the instance and running.
-    instance_software = check_instance(profile_url)
+    username, domain_name = handle.split('@')
+
+    # Use the API to determine what the server is running.
+    instance_software = check_instance(domain_name)
 
     # Mastodon
     if instance_software == 'Mastodon':
-        url = f'{profile_url}/with_replies'
+        url = f'https://{domain_name}/@{username}/with_replies'
         while url:
             lst_toot, url = mastodon_scrape(url)
             for toot in lst_toot:
@@ -250,10 +254,7 @@ if __name__ == '__main__':
         exit(1)
 
     # Pleroma
-    url = profile_url
-    domain_name, user_id = find_pleroma_user(url)
-    if domain_name == -1:
-        exit(1)
+    user_id = find_pleroma_user(username, domain_name)
     url = f'https://{domain_name}/api/v1/accounts/{user_id}/statuses?with_muted=true&limit=20'
     while url:
         lst_post, url = pleroma_scrape(url, domain_name, user_id)
