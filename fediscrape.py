@@ -28,7 +28,7 @@ def check_instance(domain_name):
     json_instance = json_instance.text
 
     dict_instance = load_json(json_instance)
-    if type(dict_instance) != dict:
+    if not isinstance(dict_instance, dict):
         sys.stderr.write('Error parsing instance JSON.\n')
         return -1
 
@@ -83,29 +83,26 @@ def find_pleroma_user(username, domain_name):
                     domain_name (str): domain name.
 
             Returns:
-                    domain_name (str), user_id (str): Domain name and user id.
+                    user_id (str): User id.
 
             In case of error:
-                    Returns -1, -1 (integers).
+                    Returns -1 (int).
     '''
-    #username = url.split('/')[-1]
-    #username = username.replace('@', '')
-    
     url = f'https://{domain_name}/api/v1/accounts/{username}'
 
     json_user = fetch(url).text
     if json_user == -1:
-        return -1, -1
+        return -1
     dict_data = load_json(json_user)
-    if type(dict_data) != dict:
+    if not isinstance(dict_data, dict):
         sys.stderr.write('Error parsing JSON data.\n')
-        return -1, -1 
+        return -1 
     
     if 'id' in dict_data:
         user_id = dict_data['id']
     else:
         sys.stderr.write('No user id.\n')
-        return -1, -1 
+        return -1 
 
     return user_id
 
@@ -142,6 +139,7 @@ def mastodon_scrape(url):
                     Returns -1, -1 (integers).
     '''
     html_doc = fetch(url)
+    # fetch() returns -1 in case of error.
     if html_doc == -1:
         return -1, -1
     html_doc = html_doc.text
@@ -200,7 +198,7 @@ def pleroma_scrape(url, domain_name, user_id):
         return -1, -1
     json_posts = json_posts.text
     lst_posts = load_json(json_posts)
-    if type(lst_posts) != list:
+    if not isinstance(lst_posts, list):
         sys.stderr.write('Broken list of posts.\n')
         return -1, -1 
 
@@ -209,7 +207,7 @@ def pleroma_scrape(url, domain_name, user_id):
         return lst_posts, url
 
     for post in lst_posts:
-        if type(post) == dict:
+        if isinstance(post, dict):
             dict_post = {}
             if 'created_at' in post.keys():
                 dict_post['datetime'] = post['created_at']
