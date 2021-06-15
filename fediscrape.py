@@ -331,7 +331,10 @@ def pleroma_scrape(url, domain_name, user_id):
 
 if __name__ == '__main__':
     # Usage: ./fediscrape.py https://example.com/@user
-    if len(sys.argv) != 2 or '@' not in sys.argv[1] or len(sys.argv[1].split('@')) != 2:
+    if (
+        len(sys.argv) != 2 or sys.argv[1].count('@') != 1 or
+        sys.argv[1][0] == '@' or sys.argv[1][-1] == '@'
+    ):
         sys.stderr.write(f'Usage: {sys.argv[0]} username@domain\n')
         exit(1)
     handle = sys.argv[1]
