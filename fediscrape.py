@@ -52,9 +52,9 @@ def check_instance(domain_name):
 
 def fetch(url, tries=5, http_method='GET', payload={}):
     '''
-    Returns an HTTP response (requests.models.Response).
+    Returns an HTTP response (requests.models.Response) and a status code (int).
 
-            Parameter:
+            Parameters:
                     url (str): URL to fetch (GET request).
                     tries (int): How many requests before abandoning (Optional).
                     http_method (str): HTTP method GET/POST (Optional)
@@ -98,7 +98,7 @@ def find_misskey_user(username, domain_name):
     '''
     Returns user id (str).
 
-            Parameter:
+            Parameters:
                     username (str): user name.
                     domain_name (str): domain name.
 
@@ -130,7 +130,7 @@ def find_pleroma_user(username, domain_name):
     '''
     Returns user id (str).
 
-            Parameter:
+            Parameters:
                     username (str): user name.
                     domain_name (str): domain name.
 
@@ -160,7 +160,7 @@ def find_pleroma_user(username, domain_name):
 
 def load_json(json_data):
     '''
-    Returns a parsed JSON. 
+    Returns a parsed JSON (list or dict). 
 
             Parameter:
                     json_data (str): JSON.
