@@ -3,6 +3,7 @@ import requests
 import sys
 import time
 
+
 def check_instance(domain_name):
     '''
     Returns the instance software as a string.
@@ -44,6 +45,7 @@ def check_instance(domain_name):
 
     sys.stderr.write('Server software not recognized.\n')
     return -1
+
 
 def fetch(url, tries=5, http_method='GET', payload={}):
     '''
@@ -89,6 +91,7 @@ def fetch(url, tries=5, http_method='GET', payload={}):
 
     sys.stderr.write(f'Connection failed after {tries} tries.\n')
     return -1, -1
+
 
 def load_json(json_data):
     '''

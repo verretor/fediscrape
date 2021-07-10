@@ -1,5 +1,6 @@
 import shared
 
+
 def find_user(username, domain_name):
     '''
     Returns user id (str).
@@ -31,6 +32,7 @@ def find_user(username, domain_name):
     else:
         sys.stderr.write('No user id.\n')
         return -1
+
 
 def scrape(domain_name, payload):
     '''

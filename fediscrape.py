@@ -7,6 +7,7 @@ import misskey
 import pleroma
 import shared
 
+
 if __name__ == '__main__':
     # Usage: ./fediscrape.py https://example.com/@user
     if (
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     # Pleroma
     elif instance_software == 'Pleroma':
         user_id = pleroma.find_user(username, domain_name)
-        url = f'https://{domain_name}/api/v1/accounts/{user_id}/statuses?with_muted=true&limit=40'
+        url = f'https://{domain_name}/api/v1/accounts/{user_id}/statuses?with_muted=true&limit=40&exclude_reblogs=true'
         while url:
             lst_post, url = pleroma.scrape(url, domain_name, user_id)
             if lst_post == -1:

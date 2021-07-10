@@ -1,5 +1,6 @@
 import shared
 
+
 def find_user(username, domain_name):
     '''
     Returns user id (str).
@@ -50,9 +51,9 @@ def scrape(url, domain_name, user_id):
     '''
     # Example URLs:
     # See the most recent posts.
-    # https://{domain_name}/api/v1/accounts/{user_id}/statuses?with_muted=true&limit=40
+    # https://{domain_name}/api/v1/accounts/{user_id}/statuses?with_muted=true&limit=40&exclude_reblogs=true
     # {max_id}: Only posts older than this post's id will be shown.
-    # https://{domain_name}/api/v1/accounts/{user_id}/statuses?max_id={max_id}&with_muted=true&limit=40
+    # https://{domain_name}/api/v1/accounts/{user_id}/statuses?max_id={max_id}&with_muted=true&limit=40&exclude_reblogs=true
 
     lst_posts = []
     lst_out = []
@@ -87,5 +88,5 @@ def scrape(url, domain_name, user_id):
     if 'id' in last_post.keys():
         max_id = last_post['id']
 
-    url = f'https://{domain_name}/api/v1/accounts/{user_id}/statuses?max_id={max_id}&with_muted=true&limit=40'
+    url = f'https://{domain_name}/api/v1/accounts/{user_id}/statuses?max_id={max_id}&with_muted=true&limit=40&exclude_reblogs=true'
     return lst_out, url

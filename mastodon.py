@@ -1,6 +1,7 @@
 import shared
 from bs4 import BeautifulSoup
 
+
 def scrape(url):
     '''
     Returns list of toots (list) and URL for the next page to scrape (str) as a tuple.
